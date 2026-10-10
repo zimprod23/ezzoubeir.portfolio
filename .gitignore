@@ -7,3 +7,6 @@ dist/
 
 # Private documents used as sources, never published
 *.pdf
+
+.vercel
+.env*
