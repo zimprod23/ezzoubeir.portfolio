@@ -1,0 +1,94 @@
+---
+import { approach, t, type Lang } from '../data/content';
+import { splitHeading } from '../data/format';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<section class="section approach" id="approach">
+  <div class="aura" aria-hidden="true"></div>
+  <div class="wrap grid">
+    <div class="left">
+      <span class="kicker" data-reveal>{t(approach.kicker, lang)}</span>
+      <h2 class="display h2 sm" data-reveal-group set:html={splitHeading(t(approach.title, lang))} />
+      <p class="lead" data-reveal style="--d:200">{t(approach.lead, lang)}</p>
+
+      <ol class="principles">
+        {approach.principles.map((p, i) => (
+          <li data-reveal style={`--d:${i * 90}`}>
+            <span class="pn mono">0{i + 1}</span>
+            <div>
+              <h3>{t(p.title, lang)}</h3>
+              <p>{t(p.body, lang)}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="right" data-reveal style="--d:150" data-parallax="-0.04">
+      <div class="term" data-terminal>
+        <div class="term-bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="mono">~/repos/pgsh — zsh</span>
+        </div>
+        <div class="term-body mono" role="img" aria-label="Example terminal session">
+          {approach.terminal.map((l) => (
+            <div class={`ln ${l.kind}`} data-line={l.text}>
+              {l.kind === 'cmd' && <span class="ps">❯ </span>}<span class="tx">{l.text}</span>
+            </div>
+          ))}
+          <span class="caret" aria-hidden="true"></span>
+        </div>
+      </div>
+      <p class="caption mono" data-reveal>{t(approach.caption, lang)}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .approach { overflow: hidden; }
+  .aura {
+    position: absolute; width: 900px; height: 900px; right: -300px; top: 10%; pointer-events: none;
+    background: radial-gradient(circle, rgba(var(--accent-rgb), 0.10), transparent 60%);
+    filter: blur(20px);
+  }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(48px, 7vw, 110px); align-items: start; }
+  .lead { margin-top: 28px; }
+  .principles { margin: 48px 0 0; padding: 0; list-style: none; }
+  .principles li { display: grid; grid-template-columns: 48px 1fr; gap: 12px; padding: 22px 0; border-top: 1px solid var(--line); }
+  .pn { font-size: 12px; color: var(--accent); padding-top: 4px; }
+  .principles li { transition: padding-left 0.5s var(--ease); }
+  .principles li:hover { padding-left: 10px; }
+  .principles h3 { font-family: var(--display); font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+  .principles p { margin-top: 6px; color: var(--mute); font-size: 15px; max-width: 52ch; }
+
+  .right { position: sticky; top: 110px; }
+  .term {
+    border-radius: 18px; overflow: hidden; border: 1px solid var(--line-2);
+    background: #0c0c0d; box-shadow: 0 50px 120px -50px rgba(var(--accent-rgb), 0.25), 0 30px 80px -30px rgba(0, 0, 0, 0.9);
+  }
+  .term-bar { display: flex; align-items: center; gap: 14px; height: 42px; padding: 0 16px; border-bottom: 1px solid var(--line); font-size: 11.5px; color: var(--mute); }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--line-2); }
+  .dots i:nth-child(1) { background: #ff6b81; } .dots i:nth-child(2) { background: #ffcf5c; } .dots i:nth-child(3) { background: var(--accent-2); }
+  .term-body { padding: 22px 22px 28px; min-height: 340px; font-size: 13px; line-height: 1.85; white-space: pre-wrap; word-break: break-word; }
+  .ln { display: block; }
+  .ln.cmd .tx { color: var(--bone); }
+  .ln.out .tx { color: var(--bone-2); }
+  .ln.ok .tx { color: var(--signal); }
+  .ln.dim .tx { color: var(--mute); font-style: italic; }
+  .ps { color: var(--accent); }
+  .caret { display: inline-block; width: 8px; height: 16px; background: var(--accent); vertical-align: -3px; animation: caret 1s steps(1) infinite; }
+  @keyframes caret { 50% { opacity: 0; } }
+  .caption { margin-top: 16px; font-size: 11.5px; color: var(--mute); }
+
+  /* JS hides lines until they are typed */
+  .term.is-typing .ln { display: none; }
+  .term.is-typing .ln.shown { display: block; }
+
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: 1fr; }
+    .right { position: relative; top: 0; }
+    .term-body { min-height: 0; font-size: 12px; }
+  }
+</style>

@@ -1,0 +1,51 @@
+---
+import { marquee, marqueeVerbs, t, type Lang } from '../data/content';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const verbs = marqueeVerbs.map((v) => t(v, lang));
+// Each track holds the list twice so it can loop seamlessly.
+const rowA = [...marquee, ...marquee];
+const rowB = [...verbs, ...verbs, ...verbs, ...verbs];
+---
+<div class="marquee" aria-label="Technologies">
+  <div class="row a">
+    <div class="track" data-velo="1">
+      {rowA.map((m, i) => (
+        <span class="item" aria-hidden={i >= marquee.length ? 'true' : undefined}>
+          {m}<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0l1.5 4.5L12 6l-4.5 1.5L6 12l-1.5-4.5L0 6l4.5-1.5z" fill="currentColor"/></svg>
+        </span>
+      ))}
+    </div>
+  </div>
+  <div class="row b" aria-hidden="true">
+    <div class="track" data-velo="-1">
+      {rowB.map((v) => <span class="verb display">{v}<i></i></span>)}
+    </div>
+  </div>
+</div>
+
+<style>
+  .marquee {
+    position: relative; overflow: hidden; padding: 26px 0 34px;
+    border-block: 1px solid var(--line);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .row { overflow: hidden; }
+  .track { display: flex; width: max-content; will-change: transform; }
+  .item {
+    display: inline-flex; align-items: center; gap: 26px; padding-right: 26px;
+    font-family: var(--display); font-weight: 500; letter-spacing: -0.03em;
+    font-size: clamp(22px, 2.4vw, 32px); color: var(--bone-2); white-space: nowrap;
+  }
+  .item svg { color: var(--accent); }
+  .row.b { margin-top: 10px; }
+  .verb {
+    display: inline-flex; align-items: center; gap: 0.35em; padding-right: 0.35em;
+    font-size: clamp(56px, 9vw, 140px); font-weight: 700; line-height: 1.05; white-space: nowrap;
+    color: transparent; -webkit-text-stroke: 1px rgba(226, 232, 255, 0.28);
+    transition: color 0.4s;
+  }
+  .verb:hover { color: var(--bone); -webkit-text-stroke-color: transparent; }
+  .verb i { width: 0.22em; height: 0.22em; border-radius: 50%; background: var(--grad); }
+</style>

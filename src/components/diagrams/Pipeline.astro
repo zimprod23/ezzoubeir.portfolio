@@ -1,0 +1,88 @@
+---
+// Lexi — transcription-first pipeline, fully on-device.
+---
+<svg class="dg" viewBox="0 0 520 400" role="img" aria-label="Lexi pipeline: a scanned document is split into bands, transcribed by a local Gemma model, indexed in SQLite FTS5 and queried by chat through a search tool, all offline">
+  <rect x="16" y="16" width="488" height="368" rx="14" class="frame" />
+  <text x="32" y="40" class="lbl">ON-DEVICE · NO CLOUD</text>
+
+  <!-- 1. document -->
+  <g transform="translate(40 70)">
+    <rect x="8" y="-6" width="74" height="96" rx="6" class="sheet back" />
+    <rect width="74" height="96" rx="6" class="sheet" />
+    {[18, 30, 42, 54, 66].map((y, i) => <rect x="12" y={y} width={i % 2 ? 40 : 50} height="4" rx="2" class="ink" />)}
+    <text x="37" y="120" text-anchor="middle" class="role">scan.pdf</text>
+  </g>
+
+  <!-- 2. bands -->
+  <g transform="translate(168 70)">
+    <rect width="74" height="96" rx="6" class="sheet" />
+    <rect x="0" y="0" width="74" height="32" class="band b1" />
+    <rect x="0" y="32" width="74" height="32" class="band b2" />
+    <rect x="0" y="64" width="74" height="32" class="band b3" />
+    <line x1="0" y1="32" x2="74" y2="32" class="cut" />
+    <line x1="0" y1="64" x2="74" y2="64" class="cut" />
+    <text x="37" y="120" text-anchor="middle" class="role">3 bands</text>
+  </g>
+
+  <!-- 3. model -->
+  <g transform="translate(330 118)">
+    <circle r="44" class="ring r1" />
+    <circle r="30" class="ring r2" />
+    <circle r="18" class="core" />
+    <text y="4" text-anchor="middle" class="lbl dark">LLM</text>
+    <text y="72" text-anchor="middle" class="role">gemma · ollama</text>
+  </g>
+
+  <!-- 4. text -->
+  <g transform="translate(420 74)">
+    <rect width="68" height="88" rx="6" class="node-r" />
+    <text x="34" y="34" text-anchor="middle" class="ar">محضر</text>
+    {[48, 58, 68].map((y) => <rect x="10" y={y} width="48" height="3" rx="1.5" class="ink" />)}
+    <text x="34" y="116" text-anchor="middle" class="role">text</text>
+  </g>
+
+  <!-- arrows row 1 -->
+  <path id="p1" d="M124 118 L160 118" class="flow" />
+  <path id="p2" d="M250 118 L282 118" class="flow" />
+  <path id="p3" d="M378 118 L414 118" class="flow" />
+  <path id="p4" d="M480 166 C 480 200, 470 208, 470 230" class="flow" />
+
+  <!-- row 2 -->
+  <g class="node" transform="translate(330 232)">
+    <rect width="160" height="46" rx="10" />
+    <circle cx="14" cy="23" r="3.5" class="led" />
+    <text x="26" y="19" class="lbl">SQLITE · FTS5</text>
+    <text x="26" y="35" class="role">trigram index</text>
+  </g>
+  <path id="p5" d="M328 255 L262 255" class="flow" />
+  <g class="node" transform="translate(150 232)">
+    <rect width="110" height="46" rx="10" />
+    <text x="14" y="19" class="lbl">TOOL CALL</text>
+    <text x="14" y="35" class="role">search_cases()</text>
+  </g>
+  <path id="p6" d="M148 255 C 110 255, 96 270, 92 296" class="flow" />
+
+  <!-- chat -->
+  <g transform="translate(40 300)">
+    <rect width="190" height="30" rx="15" class="bubble q" />
+    <rect x="14" y="13" width="120" height="4" rx="2" class="ink" />
+    <rect x="40" y="38" width="190" height="30" rx="15" class="bubble a" />
+    <circle cx="62" cy="53" r="3" class="typing t1" />
+    <circle cx="74" cy="53" r="3" class="typing t2" />
+    <circle cx="86" cy="53" r="3" class="typing t3" />
+  </g>
+
+  <!-- offline badge -->
+  <g transform="translate(380 316)">
+    <rect width="108" height="40" rx="20" class="badge" />
+    <path d="M22 26h16a6 6 0 0 0 0-12 9 9 0 0 0-17 2 5 5 0 0 0 1 10z" class="cloud" />
+    <line x1="18" y1="10" x2="42" y2="30" class="strike" />
+    <text x="52" y="25" class="lbl ok">OFFLINE</text>
+  </g>
+
+  {['p1', 'p2', 'p3', 'p4', 'p5', 'p6'].map((id, i) => (
+    <circle r="3" class="packet">
+      <animateMotion dur="1.4s" begin={`${i * 0.45}s`} repeatCount="indefinite"><mpath href={`#${id}`} /></animateMotion>
+    </circle>
+  ))}
+</svg>

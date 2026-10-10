@@ -1,0 +1,167 @@
+---
+import '../styles/diagrams.css';
+import { projects, ui, t, type Lang } from '../data/content';
+import { splitHeading } from '../data/format';
+import Topology from './diagrams/Topology.astro';
+import Pipeline from './diagrams/Pipeline.astro';
+import Flow from './diagrams/Flow.astro';
+import Orbit from './diagrams/Orbit.astro';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const diagrams = { topology: Topology, pipeline: Pipeline, flow: Flow, orbit: Orbit };
+const paths = { topology: 'deploy/topology.svg', pipeline: 'pipeline/ingest.svg', flow: 'request/lifecycle.svg', orbit: 'modules/orbit.svg' };
+---
+<section class="section work" id="work">
+  <div class="wrap">
+    <header class="head">
+      <span class="kicker" data-reveal>{t(ui.selectedWork, lang)}</span>
+      <h2 class="display h2" data-reveal-group set:html={splitHeading(t(ui.workTitle, lang))} />
+    </header>
+
+    {projects.map((p, i) => {
+      const D = diagrams[p.diagram];
+      return (
+        <article class:list={['case', { flip: i % 2 === 1 }]} id={p.id}>
+          <div class="info">
+            <div class="title-row" data-reveal>
+              <span class="num display" aria-hidden="true">{p.index}</span>
+              <div>
+                <h3 class="display name">
+                  {p.name}
+                  {p.native && <span class="native" lang="ar">{p.native}</span>}
+                </h3>
+                <p class="tagline">{t(p.tagline, lang)}</p>
+              </div>
+            </div>
+
+            <dl class="meta mono" data-reveal style="--d:80">
+              <div><dt>{lang === 'en' ? 'Context' : 'Contexte'}</dt><dd>{t(p.context, lang)}</dd></div>
+              <div><dt>{lang === 'en' ? 'Role' : 'Rôle'}</dt><dd>{t(p.role, lang)}</dd></div>
+              <div><dt>{lang === 'en' ? 'Year' : 'Année'}</dt><dd>{p.year}</dd></div>
+            </dl>
+
+            <p class="summary" data-reveal style="--d:120">{t(p.summary, lang)}</p>
+
+            <h4 class="sub mono" data-reveal>{t(ui.built, lang)}</h4>
+            <ul class="built">
+              {p.built.map((b, j) => (
+                <li data-reveal style={`--d:${j * 70}`}>{t(b, lang)}</li>
+              ))}
+            </ul>
+
+            <div class="metrics" data-reveal>
+              {p.metrics.map((m) => (
+                <div class="metric">
+                  <span class="display">{m.value}</span>
+                  <span class="m-lbl">{t(m.label, lang)}</span>
+                </div>
+              ))}
+            </div>
+
+            <div class="stack" data-reveal>
+              {p.stack.map((s) => <span class="tag">{s}</span>)}
+            </div>
+
+            {p.url && (
+              <a class="visit" href={p.url} target="_blank" rel="noopener" data-cursor data-reveal>
+                {t(ui.visit, lang)} <span class="mono">{p.url.replace('https://', '')}</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 10L10 2M4 2h6v6" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+              </a>
+            )}
+          </div>
+
+          <div class="visual" data-parallax="0.06">
+            <div class="window" data-tilt data-clip data-cursor-label={t(ui.explore, lang)}>
+              <div class="bar">
+                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="path mono">{p.id}/{paths[p.diagram]}</span>
+                <span class="live mono"><span aria-hidden="true"></span>live</span>
+              </div>
+              <div class="canvas">
+                <div class="glow" aria-hidden="true"></div>
+                <D />
+              </div>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .head { margin-bottom: clamp(64px, 9vw, 128px); }
+  .case:last-child { padding-bottom: 0; }
+  .case {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: clamp(40px, 6vw, 96px);
+    align-items: start; padding: clamp(56px, 7vw, 96px) 0; border-top: 1px solid var(--line);
+  }
+  .case.flip .info { order: 2; }
+  .case.flip .visual { order: 1; }
+
+  .title-row { display: flex; gap: 22px; align-items: flex-start; }
+  .num { font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; padding: 6px 10px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--accent-2); line-height: 1; margin-top: 18px; }
+  .name { font-size: clamp(60px, 8vw, 112px); line-height: 0.9; font-weight: 600; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  .native { font-family: 'Noto Naskh Arabic', serif; font-weight: 400; letter-spacing: 0; font-size: 0.42em; color: var(--mute); }
+  .tagline { margin-top: 14px; font-size: 18px; color: var(--bone-2); max-width: 40ch; }
+
+  .meta { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 8px 32px; margin: 36px 0 28px; font-size: 12px; }
+  .meta dt { color: var(--mute); text-transform: uppercase; letter-spacing: 0.12em; font-size: 10.5px; }
+  .meta dd { margin: 4px 0 0; color: var(--bone); }
+
+  .summary { color: var(--bone-2); font-size: 16.5px; max-width: 58ch; }
+  .sub { margin: 32px 0 14px; font-size: 11px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
+  .built li {
+    position: relative; padding: 12px 0 12px 28px; border-top: 1px solid var(--line);
+    font-size: 15px; color: var(--bone-2); line-height: 1.55;
+  }
+  .built li::before { content: ''; position: absolute; left: 2px; top: 22px; width: 12px; height: 1px; background: var(--accent); }
+
+  .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 32px 0 24px; }
+  .metric { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg, rgba(236, 232, 225, 0.03), transparent); }
+  .metric { transition: border-color 0.4s, transform 0.5s var(--ease); }
+  .metric:hover { border-color: rgba(var(--accent-rgb), 0.5); transform: translateY(-3px); }
+  .metric .display { display: block; font-size: clamp(28px, 3vw, 40px); line-height: 1; }
+  .m-lbl { display: block; margin-top: 8px; font-size: 12.5px; color: var(--mute); line-height: 1.35; }
+
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; }
+  .visit {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 28px; padding-bottom: 4px;
+    border-bottom: 1px solid var(--accent); font-size: 15px;
+  }
+  .visit .mono { color: var(--mute); font-size: 12px; }
+  .visit svg { color: var(--accent); transition: transform 0.4s var(--ease); }
+  .visit:hover svg { transform: translate(2px, -2px); }
+
+  .visual { position: sticky; top: 104px; perspective: 1400px; }
+  .window {
+    border: 1px solid var(--line-2); border-radius: 20px; overflow: hidden;
+    background: linear-gradient(180deg, var(--ink-2), var(--ink));
+    box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+    transform-style: preserve-3d; transition: transform 0.8s var(--ease);
+  }
+  .bar { display: flex; align-items: center; gap: 14px; height: 44px; padding: 0 16px; border-bottom: 1px solid var(--line); }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--line-2); }
+  .path { flex: 1; font-size: 11.5px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .live { display: flex; align-items: center; gap: 6px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--signal); }
+  .live span { width: 6px; height: 6px; border-radius: 50%; background: var(--signal); animation: blink 2s infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  .canvas { position: relative; padding: clamp(16px, 3vw, 32px); }
+  .glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 40%), rgba(var(--accent-rgb), 0.16), transparent 50%);
+    transition: background 0.2s;
+  }
+
+  @media (max-width: 960px) {
+    .case { grid-template-columns: 1fr; }
+    .case.flip .info, .case.flip .visual { order: initial; }
+    .visual { position: relative; top: 0; }
+  }
+  @media (max-width: 520px) {
+    .meta { grid-template-columns: 1fr 1fr; }
+    .metrics { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .metric { padding: 12px; }
+  }
+</style>

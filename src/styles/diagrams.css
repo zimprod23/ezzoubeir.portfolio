@@ -1,0 +1,59 @@
+/* Shared styles for the animated SVG architecture diagrams */
+.dg { width: 100%; height: auto; overflow: visible; }
+.dg text { font-family: var(--mono); }
+.dg .lbl { font-size: 9.5px; letter-spacing: 0.12em; fill: var(--mute); }
+.dg .lbl.ok { fill: var(--signal); }
+.dg .lbl.dark { fill: var(--ink); font-weight: 500; }
+.dg .role { font-size: 11.5px; fill: var(--bone); }
+.dg .ar { font-family: 'Noto Naskh Arabic', 'Segoe UI', serif; font-size: 20px; fill: var(--bone); }
+
+.dg .frame { fill: none; stroke: var(--line-2); stroke-dasharray: 4 6; }
+.dg .node rect, .dg .node-r { fill: var(--ink-3); stroke: var(--line-2); }
+.dg .node.ops rect { stroke: rgba(var(--accent-2-rgb), 0.35); }
+.dg .pill rect { fill: var(--ink-2); stroke: var(--line-2); }
+
+.dg .led { fill: var(--accent); animation: dg-blink 2.4s ease-in-out infinite; }
+.dg .led.ok { fill: var(--signal); }
+.dg .node:nth-child(odd) .led { animation-delay: -1.2s; }
+
+.dg .flow { fill: none; stroke: var(--accent); stroke-opacity: 0.55; stroke-width: 1.2; stroke-dasharray: 3 5; animation: dg-dash 1.2s linear infinite; }
+.dg .flow.rt { stroke: var(--signal); stroke-opacity: 0.45; }
+.dg .tele { fill: none; stroke: var(--signal); stroke-opacity: 0.22; stroke-dasharray: 1 5; stroke-linecap: round; }
+.dg .packet { fill: var(--accent); filter: drop-shadow(0 0 6px var(--accent)); }
+.dg .packet.ok { fill: var(--signal); filter: drop-shadow(0 0 6px var(--signal)); }
+
+/* Pipeline */
+.dg .sheet { fill: var(--bone); }
+.dg .sheet.back { fill: var(--bone-2); opacity: 0.35; }
+.dg .ink { fill: var(--mute); opacity: 0.8; }
+.dg .sheet ~ .ink { fill: #6b6862; }
+.dg .band { fill: var(--accent); opacity: 0; animation: dg-band 3s ease-in-out infinite; }
+.dg .band.b2 { animation-delay: 1s; }
+.dg .band.b3 { animation-delay: 2s; }
+.dg .cut { stroke: var(--ink); stroke-dasharray: 3 3; }
+.dg .ring { fill: none; stroke: var(--accent); stroke-opacity: 0.35; transform-box: fill-box; transform-origin: center; animation: dg-ring 3s ease-out infinite; }
+.dg .ring.r2 { animation-delay: 1.5s; }
+.dg .core { fill: var(--accent); }
+.dg .bubble.q { fill: var(--ink-3); stroke: var(--line-2); }
+.dg .bubble.a { fill: var(--accent-soft); stroke: rgba(var(--accent-rgb), 0.4); }
+.dg .typing { fill: var(--accent); animation: dg-type 1.2s ease-in-out infinite; }
+.dg .typing.t2 { animation-delay: 0.15s; }
+.dg .typing.t3 { animation-delay: 0.3s; }
+.dg .badge { fill: rgba(var(--accent-2-rgb), 0.08); stroke: rgba(var(--accent-2-rgb), 0.3); }
+.dg .cloud { fill: none; stroke: var(--signal); stroke-width: 1.4; }
+.dg .strike { stroke: var(--signal); stroke-width: 1.6; }
+
+/* Flow */
+.dg .actor { fill: var(--ink-3); stroke: var(--line-2); }
+.dg .actor-i { fill: none; stroke: var(--bone-2); stroke-width: 1.4; }
+.dg .layer rect { animation: dg-layer 4s ease-in-out infinite; animation-delay: calc(var(--i) * 0.35s); }
+.dg .shield-p { fill: rgba(var(--accent-2-rgb), 0.07); stroke: var(--signal); stroke-width: 1.4; }
+.dg .shield { animation: dg-float 4s ease-in-out infinite; }
+
+@keyframes dg-dash { to { stroke-dashoffset: -16; } }
+@keyframes dg-blink { 50% { opacity: 0.3; } }
+@keyframes dg-band { 0%, 100% { opacity: 0; } 20%, 40% { opacity: 0.28; } }
+@keyframes dg-ring { from { transform: scale(0.6); opacity: 1; } to { transform: scale(1.35); opacity: 0; } }
+@keyframes dg-type { 0%, 100% { opacity: 0.25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+@keyframes dg-layer { 0%, 100% { stroke: var(--line-2); } 12% { stroke: var(--accent); } 30% { stroke: var(--line-2); } }
+@keyframes dg-float { 50% { transform: translateY(-5px); } }

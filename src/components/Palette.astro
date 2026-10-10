@@ -1,0 +1,59 @@
+---
+import { nav, person, projects, ui, contact, t, type Lang } from '../data/content';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const items = [
+  ...nav.map((n) => ({ group: lang === 'en' ? 'Sections' : 'Sections', label: t(n.label, lang), href: `#${n.id}`, hint: '#' })),
+  ...projects.map((p) => ({ group: lang === 'en' ? 'Projects' : 'Projets', label: `${p.name}: ${t(p.tagline, lang)}`, href: `#${p.id}`, hint: p.index })),
+  { group: 'Actions', label: t(ui.email, lang), href: `mailto:${person.email}`, hint: '✉' },
+  { group: 'Actions', label: t(contact.copy, lang), href: `copy:${person.email}`, hint: '⧉' },
+  { group: 'Actions', label: t(ui.switchLang, lang), href: lang === 'en' ? '/fr/' : '/', hint: lang === 'en' ? 'FR' : 'EN' },
+  { group: 'Links', label: 'LinkedIn', href: person.linkedin, hint: '↗' },
+  { group: 'Links', label: 'GitHub', href: person.github, hint: '↗' },
+];
+---
+<dialog class="palette" data-palette aria-label={t(ui.palette, lang)}>
+  <div class="box">
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="text" placeholder={t(ui.palette, lang)} data-palette-input aria-label={t(ui.palette, lang)} autocomplete="off" spellcheck="false" />
+      <kbd class="mono">esc</kbd>
+    </div>
+    <ul class="list" role="listbox" data-palette-list>
+      {items.map((it) => (
+        <li role="option" data-href={it.href} data-label={it.label.toLowerCase()} aria-selected="false">
+          <span class="grp mono">{it.group}</span>
+          <span class="lbl">{it.label}</span>
+          <span class="hint mono">{it.hint}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="foot mono">{t(ui.paletteHint, lang)}</p>
+  </div>
+</dialog>
+
+<style>
+  .palette {
+    width: min(620px, calc(100vw - 32px)); max-height: min(560px, calc(100svh - 64px)); margin: 12vh auto auto;
+    padding: 0; border: 1px solid var(--line-2); border-radius: 20px; background: rgba(17, 17, 19, 0.92);
+    color: var(--bone); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 40px 120px -20px rgba(0, 0, 0, 0.9);
+  }
+  .palette[open] { animation: pop 0.35s var(--ease); }
+  .palette::backdrop { background: rgba(5, 5, 6, 0.6); backdrop-filter: blur(4px); }
+  @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+  .box { display: flex; flex-direction: column; max-height: inherit; }
+  .search { display: flex; align-items: center; gap: 12px; padding: 0 18px; height: 60px; border-bottom: 1px solid var(--line); color: var(--mute); }
+  .search input { flex: 1; min-width: 0; height: 100%; background: none; border: 0; outline: 0; color: var(--bone); font: inherit; font-size: 16px; }
+  kbd { font-size: 10.5px; padding: 3px 7px; border: 1px solid var(--line-2); border-radius: 6px; color: var(--mute); }
+  .list { overflow-y: auto; padding: 8px; }
+  .list li { display: grid; grid-template-columns: 76px 1fr auto; align-items: center; gap: 12px; padding: 12px 12px; border-radius: 12px; cursor: pointer; }
+  .list li[hidden] { display: none; }
+  .list li[aria-selected='true'] { background: rgba(236, 232, 225, 0.07); }
+  .list li[aria-selected='true'] .hint { color: var(--accent); }
+  .grp { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute); }
+  .lbl { font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hint { font-size: 11px; color: var(--mute); }
+  .foot { padding: 12px 18px; border-top: 1px solid var(--line); font-size: 11px; color: var(--mute); }
+  @media (max-width: 520px) { .list li { grid-template-columns: 1fr auto; } .grp { display: none; } }
+</style>

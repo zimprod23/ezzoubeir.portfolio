@@ -1,0 +1,67 @@
+---
+import { services, t, type Lang } from '../data/content';
+import { splitHeading } from '../data/format';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<section class="section services" id="services">
+  <div class="wrap">
+    <span class="kicker" data-reveal>{t(services.kicker, lang)}</span>
+    <h2 class="display h2" data-reveal-group set:html={splitHeading(t(services.title, lang))} />
+
+    <div class="offers">
+      {services.offers.map((o, i) => (
+        <article class="offer" data-reveal style={`--d:${i * 80}`}>
+          <span class="on mono">{o.n}</span>
+          <h3 class="display">{t(o.title, lang)}</h3>
+          <p>{t(o.body, lang)}</p>
+          <div class="tags">{o.tags.map((tg) => <span class="tag">{tg}</span>)}</div>
+          <span class="sweep" aria-hidden="true"></span>
+        </article>
+      ))}
+    </div>
+
+    <dl class="terms" data-reveal>
+      {services.terms.map((tm) => (
+        <div>
+          <dt class="mono">{t(tm.k, lang)}</dt>
+          <dd>{t(tm.v, lang)}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .offers { margin-top: clamp(48px, 6vw, 80px); border-bottom: 1px solid var(--line); }
+  .offer {
+    position: relative; display: grid; grid-template-columns: 80px minmax(0, 1.1fr) minmax(0, 1.4fr) auto;
+    gap: 24px; align-items: center; padding: 36px 0; border-top: 1px solid var(--line); overflow: hidden;
+  }
+  .on { font-family: var(--mono); font-size: 12px; color: var(--accent); position: relative; z-index: 1; }
+  .offer h3 { font-size: clamp(30px, 3.6vw, 52px); line-height: 1; position: relative; z-index: 1; transition: transform 0.6s var(--ease); }
+  .offer p { color: var(--bone-2); font-size: 15.5px; max-width: 52ch; position: relative; z-index: 1; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; max-width: 260px; position: relative; z-index: 1; }
+  .sweep {
+    position: absolute; inset: 0; background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.16), rgba(var(--accent-2-rgb), 0.06) 60%, transparent);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.8s var(--ease);
+  }
+  .offer:hover .sweep { transform: scaleX(1); }
+  .offer:hover h3 { transform: translateX(10px); }
+
+  .terms { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 56px 0 0; }
+  .terms dt { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
+  .terms dd { margin: 8px 0 0; font-size: 15px; color: var(--bone); line-height: 1.5; }
+
+  @media (max-width: 1060px) {
+    .offer { grid-template-columns: 56px 1fr; }
+    .offer p, .tags { grid-column: 2; }
+    .tags { justify-content: flex-start; max-width: none; }
+    .terms { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px) {
+    .offer { grid-template-columns: 1fr; gap: 14px; }
+    .offer p, .tags { grid-column: 1; }
+    .terms { grid-template-columns: 1fr; }
+  }
+</style>

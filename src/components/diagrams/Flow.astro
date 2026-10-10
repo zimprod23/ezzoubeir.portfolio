@@ -1,0 +1,59 @@
+---
+// Balagh — request path: actors → Next.js guards → Supabase with RLS → realtime & integrations.
+const layers = ['middleware · session', 'zod · validate', 'rate limit', 'audit log'];
+const outs = ['email', 'webhooks', 'telegram · ai'];
+---
+<svg class="dg" viewBox="0 0 520 400" role="img" aria-label="Balagh request flow: students and admins go through Next.js middleware, validation, rate limiting and audit logging into Supabase protected by row-level security, with realtime updates and email, webhook and Telegram integrations">
+  <!-- actors -->
+  <g transform="translate(62 130)">
+    <circle r="26" class="actor" />
+    <circle cy="-6" r="7" class="actor-i" /><path d="M-12 14a12 10 0 0 1 24 0" class="actor-i" />
+    <text y="48" text-anchor="middle" class="role">student</text>
+  </g>
+  <g transform="translate(62 270)">
+    <circle r="26" class="actor" />
+    <circle cy="-6" r="7" class="actor-i" /><path d="M-12 14a12 10 0 0 1 24 0" class="actor-i" />
+    <text y="48" text-anchor="middle" class="role">admin</text>
+  </g>
+
+  <!-- Next.js -->
+  <rect x="150" y="60" width="168" height="290" rx="14" class="frame" />
+  <text x="166" y="84" class="lbl">NEXT.JS 14 · APP ROUTER</text>
+  {layers.map((l, i) => (
+    <g class="node layer" transform={`translate(166 ${102 + i * 58})`} style={`--i:${i}`}>
+      <rect width="136" height="44" rx="9" />
+      <circle cx="14" cy="22" r="3.5" class="led" />
+      <text x="26" y="26" class="role">{l}</text>
+    </g>
+  ))}
+
+  <!-- Supabase -->
+  <rect x="352" y="60" width="152" height="176" rx="14" class="node-r" />
+  <text x="368" y="84" class="lbl">SUPABASE</text>
+  <g transform="translate(428 150)"><g class="shield">
+    <path d="M0 -38 L32 -26 V2 C32 22 16 36 0 42 C-16 36 -32 22 -32 2 V-26 Z" class="shield-p" />
+    <text y="6" text-anchor="middle" class="lbl ok">RLS</text>
+  </g></g>
+  <text x="428" y="222" text-anchor="middle" class="role">postgres · auth · storage</text>
+
+  <!-- outs -->
+  {outs.map((o, i) => (
+    <g class="pill" transform={`translate(368 ${262 + i * 40})`}>
+      <rect width="136" height="30" rx="15" />
+      <text x="68" y="20" text-anchor="middle" class="role">{o}</text>
+    </g>
+  ))}
+
+  <path id="f1" d="M90 130 C 120 130, 130 124, 164 124" class="flow" />
+  <path id="f2" d="M90 270 C 120 270, 130 240, 164 240" class="flow" />
+  <path id="f3" d="M304 124 C 330 124, 330 150, 354 150" class="flow" />
+  <path id="f4" d="M304 298 C 330 298, 340 277, 366 277" class="flow" />
+  <path id="f5" d="M428 62 C 428 20, 62 20, 62 102" class="flow rt" />
+  <text x="245" y="24" text-anchor="middle" class="lbl ok">REALTIME</text>
+
+  {['f1', 'f2', 'f3', 'f4', 'f5'].map((id, i) => (
+    <circle r="3" class={`packet ${id === 'f5' ? 'ok' : ''}`}>
+      <animateMotion dur={id === 'f5' ? '2.6s' : '1.5s'} begin={`${i * 0.5}s`} repeatCount="indefinite"><mpath href={`#${id}`} /></animateMotion>
+    </circle>
+  ))}
+</svg>

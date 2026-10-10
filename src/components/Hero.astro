@@ -1,0 +1,135 @@
+---
+import { hero, person, stats, t, type Lang } from '../data/content';
+import { splitHeading } from '../data/format';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const roles = hero.roles[lang];
+---
+<section class="hero" id="top">
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+  <canvas class="topology" data-topology aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="wrap hero-inner" data-hero-parallax>
+    <div class="hero-top">
+      {person.availability.open && (
+        <span class="status" data-reveal style="--d:100">
+          <span class="dot" aria-hidden="true"></span>
+          {t(person.availability.label, lang)}
+        </span>
+      )}
+      <span class="role mono" data-reveal style="--d:250">
+        <span class="prompt" aria-hidden="true">~$</span>
+        {t(hero.rolesPrefix, lang)}&nbsp;<span class="role-word" data-scramble={JSON.stringify(roles)}>{roles[0]}</span><span class="caret" aria-hidden="true"></span>
+      </span>
+    </div>
+
+    <h1 class="display headline" data-reveal-group>
+      <span class="sr-only">{person.firstName} {person.lastName}: </span>
+      <Fragment set:html={splitHeading(t(hero.headline, lang), 150, 16)} />
+    </h1>
+
+    <div class="hero-bottom">
+      <p class="lead" data-reveal style="--d:700">{t(hero.lead, lang)}</p>
+      <div class="ctas" data-reveal style="--d:850">
+        <a class="btn btn-primary" href={`mailto:${person.email}`} data-cursor data-magnetic data-fill>
+          {t(hero.ctaPrimary, lang)}
+          <svg class="arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#work" data-cursor data-magnetic>{t(hero.ctaSecondary, lang)}</a>
+      </div>
+    </div>
+
+    <dl class="stats" data-reveal style="--d:1000">
+      {stats.map((s) => (
+        <div class="stat">
+          <dt class="display">
+            {s.prefix}<span data-count={s.value}>{s.value.toLocaleString('en-US')}</span>{s.suffix}
+          </dt>
+          <dd>{t(s.label, lang)}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+
+  <a href="#work" class="scroll-cue mono" aria-label={t(hero.scroll, lang)} data-cursor>
+    <span class="line" aria-hidden="true"></span>{t(hero.scroll, lang)}
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative; min-height: 100svh; display: flex; align-items: flex-end;
+    padding: 112px 0 40px; overflow: hidden; isolation: isolate;
+  }
+  .topology { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; }
+
+  .aurora { position: absolute; inset: -10%; z-index: -3; filter: blur(90px) saturate(130%); opacity: 0.55; pointer-events: none; }
+  .aurora i { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
+  .aurora i:nth-child(1) { width: 46vw; height: 46vw; right: 2%; top: 4%; background: rgba(var(--accent-rgb), 0.55); animation: drift1 18s ease-in-out infinite alternate; }
+  .aurora i:nth-child(2) { width: 38vw; height: 38vw; right: 22%; top: 34%; background: rgba(var(--accent-2-rgb), 0.35); animation: drift2 22s ease-in-out infinite alternate; }
+  .aurora i:nth-child(3) { width: 30vw; height: 30vw; left: -6%; bottom: -10%; background: rgba(80, 120, 255, 0.25); animation: drift3 26s ease-in-out infinite alternate; }
+  @keyframes drift1 { to { transform: translate(-12vw, 10vh) scale(1.15); } }
+  @keyframes drift2 { to { transform: translate(14vw, -12vh) scale(0.85); } }
+  @keyframes drift3 { to { transform: translate(18vw, -8vh) scale(1.2); } }
+
+  .vignette {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 30%, transparent 0%, rgba(7, 8, 11, 0.55) 70%, var(--ink) 100%),
+      linear-gradient(to bottom, rgba(7, 8, 11, 0.2), transparent 30%, transparent 60%, var(--ink));
+  }
+  .hero-inner { position: relative; will-change: transform, opacity; }
+  .hero-top { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-bottom: 26px; }
+  .status {
+    display: inline-flex; align-items: center; gap: 10px; height: 34px; padding: 0 14px 0 12px;
+    border-radius: 999px; background: rgba(var(--accent-2-rgb), 0.08); border: 1px solid rgba(var(--accent-2-rgb), 0.28);
+    color: var(--accent-2); font-size: 13px; font-weight: 500;
+  }
+  .dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--accent-2); }
+  .dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--accent-2); animation: ping 1.8s var(--ease) infinite; }
+  @keyframes ping { to { transform: scale(3); opacity: 0; } }
+
+  .role { display: inline-flex; align-items: center; font-size: 13px; color: var(--bone-2); }
+  .prompt { color: var(--accent); margin-right: 10px; }
+  .role-word { color: var(--bone); }
+  .caret { width: 7px; height: 15px; margin-left: 4px; background: var(--accent-2); animation: caret 1s steps(1) infinite; }
+  @keyframes caret { 50% { opacity: 0; } }
+
+  .headline { font-size: clamp(46px, 7vw, 118px); max-width: 15ch; }
+
+  .hero-bottom {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 32px 64px;
+    margin-top: clamp(28px, 3vw, 44px);
+  }
+  .hero-bottom .lead { max-width: 58ch; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: clamp(36px, 4.5vw, 64px) 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .stat { padding: 22px 24px 0 0; }
+  .stat + .stat { padding-left: 24px; border-left: 1px solid var(--line); }
+  .stat dt { font-size: clamp(36px, 4vw, 58px); line-height: 1; }
+  .stat dd { margin: 10px 0 0; font-size: 13.5px; color: var(--mute); max-width: 24ch; line-height: 1.45; }
+
+  .scroll-cue {
+    position: absolute; right: var(--gutter); top: 50%; transform: translateY(-50%) rotate(90deg); transform-origin: right center;
+    display: flex; align-items: center; gap: 12px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute);
+  }
+  .scroll-cue .line { width: 48px; height: 1px; background: var(--line-2); position: relative; overflow: hidden; }
+  .scroll-cue .line::after { content: ''; position: absolute; inset: 0; background: var(--grad); animation: run 2.2s var(--ease-in-out) infinite; }
+  @keyframes run { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  @media (max-width: 700px) { .topology { opacity: 0.45; } .aurora { opacity: 0.4; } }
+  @media (max-width: 900px) {
+    .hero-bottom { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat:nth-child(3) { border-left: 0; padding-left: 0; }
+    .stat:nth-child(n + 3) { border-top: 1px solid var(--line); margin-top: 22px; }
+    .scroll-cue { display: none; }
+  }
+</style>

@@ -1,0 +1,71 @@
+---
+// PGSH — the real production topology: 5 VMs on one ESXi host, one HTTPS origin.
+const boxes = [
+  { id: 'proxy', x: 260, y: 118, name: 'PGSH-PROXY-01', role: 'Caddy · TLS' },
+  { id: 'api', x: 145, y: 210, name: 'APP-NODE-01', role: '.NET 9 API' },
+  { id: 'idp', x: 375, y: 210, name: 'PGSH-IDP-01', role: 'Keycloak' },
+  { id: 'db', x: 260, y: 296, name: 'PGSH-DB-01', role: 'PostgreSQL 17' },
+];
+const W = 148, H = 46;
+const flows = [
+  { id: 't-b-p', d: 'M260 50 L260 95' },
+  { id: 't-p-a', d: 'M230 141 C 200 160, 160 165, 150 187' },
+  { id: 't-p-i', d: 'M290 141 C 320 160, 360 165, 370 187' },
+  { id: 't-a-d', d: 'M150 233 C 160 258, 200 270, 222 280' },
+  { id: 't-i-d', d: 'M370 233 C 360 258, 320 270, 298 280' },
+];
+const telemetry = [
+  'M186 360 C 40 360, 40 210, 71 210',
+  'M334 360 C 480 360, 480 210, 449 210',
+  'M260 343 L260 319',
+  'M186 352 C 20 352, 20 118, 186 118',
+];
+---
+<svg class="dg" viewBox="0 0 520 400" role="img" aria-label="PGSH topology: browser to Caddy proxy, API and Keycloak, PostgreSQL, observed by an ops VM, all on one ESXi host">
+  <defs>
+    <linearGradient id="t-fade" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="var(--accent)" stop-opacity="0.9" />
+      <stop offset="1" stop-color="var(--accent)" stop-opacity="0.2" />
+    </linearGradient>
+  </defs>
+
+  <!-- ESXi host frame -->
+  <rect x="16" y="76" width="488" height="312" rx="14" class="frame" />
+  <text x="32" y="98" class="lbl">ESXI HOST · 5 VMS</text>
+
+  <!-- browser -->
+  <g class="pill">
+    <rect x="190" y="14" width="140" height="34" rx="17" />
+    <text x="260" y="36" text-anchor="middle" class="role">https://pgsh</text>
+  </g>
+
+  <!-- telemetry (ops → everyone) -->
+  {telemetry.map((d) => <path d={d} class="tele" />)}
+
+  <!-- traffic -->
+  {flows.map((f) => <path id={f.id} d={f.d} class="flow" />)}
+  {flows.map((f, i) => (
+    <circle r="3" class="packet">
+      <animateMotion dur={`${1.6 + (i % 3) * 0.35}s`} begin={`${i * 0.4}s`} repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines="0.4 0 0.2 1">
+        <mpath href={`#${f.id}`} />
+      </animateMotion>
+    </circle>
+  ))}
+
+  {boxes.map((b) => (
+    <g class="node" transform={`translate(${b.x - W / 2} ${b.y - H / 2})`}>
+      <rect width={W} height={H} rx="10" />
+      <circle cx="14" cy={H / 2} r="3.5" class="led" />
+      <text x="26" y="19" class="lbl">{b.name}</text>
+      <text x="26" y="35" class="role">{b.role}</text>
+    </g>
+  ))}
+
+  <!-- ops VM -->
+  <g class="node ops" transform="translate(186 340)">
+    <rect width="148" height="40" rx="10" />
+    <circle cx="14" cy="20" r="3.5" class="led ok" />
+    <text x="26" y="17" class="lbl">PGSH-OPS-01</text>
+    <text x="26" y="32" class="role">OTel · Grafana · k6</text>
+  </g>
+</svg>

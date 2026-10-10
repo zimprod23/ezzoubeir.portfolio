@@ -1,0 +1,93 @@
+---
+import { nav, person, ui, t, type Lang } from '../data/content';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const otherHref = lang === 'en' ? '/fr/' : '/';
+---
+<header class="nav" data-nav>
+  <div class="nav-inner">
+    <a href={lang === 'en' ? '/' : '/fr/'} class="brand" data-cursor aria-label={`${person.firstName} ${person.lastName}`}>
+      <span class="mark" aria-hidden="true">{person.initials}</span>
+      <span class="brand-name">{person.firstName} <span>{person.lastName}</span></span>
+    </a>
+
+    <nav class="links" aria-label="Primary">
+      {nav.map((n, i) => (
+        <a href={`#${n.id}`} data-cursor data-spy={n.id}>
+          <span class="idx mono">0{i + 1}</span><span data-scramble-hover>{t(n.label, lang)}</span>
+        </a>
+      ))}
+    </nav>
+
+    <div class="tools">
+      <span class="clock mono" title={t(ui.localTime, lang)}>
+        <span class="pulse" aria-hidden="true"></span>
+        RBA <time data-clock data-tz={person.timezone}>--:--</time>
+      </span>
+      <a href={otherHref} class="lang mono" data-cursor hreflang={lang === 'en' ? 'fr' : 'en'} aria-label={t(ui.switchLang, lang)}>
+        {lang === 'en' ? 'FR' : 'EN'}
+      </a>
+      <button class="kbd mono" data-palette-open data-cursor aria-label={t(ui.palette, lang)}>
+        <span class="kbd-key">⌘K</span>
+        <span class="burger" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+  <div class="progress" aria-hidden="true"><span data-progress></span></div>
+</header>
+
+<style>
+  .nav {
+    position: fixed; inset: 0 0 auto 0; z-index: 50;
+    transition: transform 0.6s var(--ease), background 0.4s, backdrop-filter 0.4s;
+  }
+  .nav.is-solid { background: rgba(9, 9, 10, 0.72); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); }
+  .nav.is-hidden { transform: translateY(-100%); }
+  .nav-inner {
+    max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter);
+    height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .mark {
+    display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px;
+    background: var(--bone); color: var(--ink);
+    font-family: var(--display); font-weight: 700; font-size: 15px; letter-spacing: -0.04em;
+    transition: transform 0.6s var(--ease), background 0.3s;
+  }
+  .brand:hover .mark { transform: rotate(-8deg) scale(1.06); background: var(--grad); }
+  .brand-name { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
+  .brand-name span { color: var(--mute); }
+
+  .links { display: flex; gap: 4px; }
+  .links a {
+    position: relative; display: flex; align-items: baseline; gap: 6px;
+    padding: 8px 14px; border-radius: 999px; font-size: 14px; color: var(--bone-2);
+    transition: color 0.3s, background 0.3s;
+  }
+  .links a:hover, .links a.is-active { color: var(--bone); background: rgba(236, 232, 225, 0.06); }
+  .links a.is-active .idx { color: var(--accent); }
+  .idx { font-size: 10px; color: var(--mute); transition: color 0.3s; }
+
+  .tools { display: flex; align-items: center; gap: 10px; }
+  .clock { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--mute); padding-right: 6px; }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 0 rgba(var(--accent-2-rgb), 0.6); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(var(--accent-2-rgb), 0.5); } 70% { box-shadow: 0 0 0 8px rgba(var(--accent-2-rgb), 0); } 100% { box-shadow: 0 0 0 0 rgba(var(--accent-2-rgb), 0); } }
+  .lang, .kbd {
+    display: grid; place-items: center; height: 36px; min-width: 44px; padding: 0 12px;
+    border: 1px solid var(--line-2); border-radius: 999px; font-size: 12px; color: var(--bone-2);
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .lang:hover, .kbd:hover { border-color: var(--bone); color: var(--bone); }
+  .burger { display: none; }
+
+  .progress { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--line); }
+  .progress span { display: block; height: 100%; width: 100%; background: var(--grad); transform-origin: 0 50%; transform: scaleX(0); }
+
+  @media (max-width: 1060px) { .links { display: none; } }
+  @media (max-width: 640px) {
+    .clock, .brand-name span { display: none; }
+    .kbd-key { display: none; }
+    .burger { display: grid; gap: 5px; }
+    .burger i { display: block; width: 16px; height: 1.5px; background: currentColor; }
+  }
+</style>

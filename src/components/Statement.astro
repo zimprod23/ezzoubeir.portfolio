@@ -1,0 +1,20 @@
+---
+import { statement, t, type Lang } from '../data/content';
+import { litWords } from '../data/format';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<section class="statement" data-statement>
+  <div class="wrap">
+    <p class="display text" set:html={litWords(t(statement, lang))} />
+  </div>
+</section>
+
+<style>
+  .statement { padding: clamp(100px, 14vw, 200px) 0; }
+  .text { font-size: clamp(32px, 4.6vw, 72px); line-height: 1.08; letter-spacing: -0.035em; max-width: 22ch; }
+  .text :global(.lw) { color: rgba(226, 232, 255, 0.14); transition: color 0.35s linear; }
+  .text :global(.lw.on) { color: var(--bone); }
+  .text :global(.lw.acc.on) { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  @media (prefers-reduced-motion: reduce) { .text :global(.lw) { color: var(--bone); } }
+</style>
